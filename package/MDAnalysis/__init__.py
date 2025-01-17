@@ -149,7 +149,6 @@ the OPLS/AA force field.
    doi:10.1016/j.jmb.2009.09.009
 
 """
-
 __all__ = ['Universe', 'Writer', 'fetch_mmtf',
            'AtomGroup', 'ResidueGroup', 'SegmentGroup']
 

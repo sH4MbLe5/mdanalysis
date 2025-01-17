@@ -60,6 +60,7 @@ import copy
 import warnings
 import contextlib
 import collections
+import functools
 
 import MDAnalysis
 import sys
@@ -76,8 +77,9 @@ from .. import _TOPOLOGY_ATTRS, _PARSERS
 from ..exceptions import NoDataError
 from ..lib import util
 from ..lib.log import ProgressBar
-from ..lib.util import cached, NamedStream, isstream
+from ..lib.util import cached, NamedStream, isstream, import_and_type_check
 from ..lib.mdamath import find_fragments
+
 from . import groups
 from ._get_readers import get_reader_for, get_parser_for
 from .groups import (ComponentBase, GroupBase,
@@ -86,7 +88,6 @@ from .groups import (ComponentBase, GroupBase,
 from .topology import Topology
 from .topologyattrs import AtomAttr, ResidueAttr, SegmentAttr, BFACTOR_WARNING
 from .topologyobjects import TopologyObject
-
 
 logger = logging.getLogger("MDAnalysis.core.universe")
 
@@ -489,12 +490,86 @@ class Universe(object):
 
         return u
 
+    @classmethod
+    @import_and_type_check
+    def from_ase(cls, atoms: 'ase.Atoms', elements_from_types: bool = False, guess_masses_from_types: bool = False) -> 'Universe':
+        """Create a Universe from an ASE Atoms object.
+
+        Parameters
+        ----------
+        atoms: ase.Atoms
+            Atoms object from ASE
+
+        Returns
+        -------
+        universe: Universe
+        """
+
+        u = cls.empty(n_atoms=len(atoms), n_residues = len(atoms), atom_resindex=[1]*len(atoms), trajectory=True)
+        u.atoms.positions = atoms.positions
+        u.add_TopologyAttr('elements', atoms.get_chemical_symbols())
+        if 'types' in atoms.arrays:
+            u.add_TopologyAttr('types', atoms.arrays['types'])
+        else:
+            u.add_TopologyAttr('types', atoms.get_chemical_symbols())
+        if 'elements' in atoms.arrays:
+            u.add_TopologyAttr('elements', atoms.arrays['elements'])
+        elif elements_from_types:
+            u.add_TopologyAttr('elements', atoms.arrays['types'])
+        else:
+            u.add_TopologyAttr('elements', atoms.get_chemical_symbols())
+        if guess_masses_from_types:
+            # lazy import to avoid circular imports
+            from ..topology.guessers import guess_masses
+            u.add_TopologyAttr('masses', guess_masses(u.atoms.types))
+        else:
+            try:
+                u.add_TopologyAttr('masses', atoms.get_masses())
+            except AttributeError:
+                warnings.warn('No masses found in ASE Atoms object. '
+                              'Setting masses to 1.0')
+                u.add_TopologyAttr('masses', np.ones(len(atoms)))
+        u.add_TopologyAttr('charges', atoms.get_initial_charges())
+        u.dimensions = atoms.cell.cellpar()
+        if 'resnames' in atoms.arrays:
+            u.add_TopologyAttr('resnames', atoms.arrays['resnames'])
+        else:
+            u.add_TopologyAttr('resnames', ['UNK'] * len(atoms))
+
+        if 'resid' in atoms.arrays:
+            u.add_TopologyAttr('resids', atoms.arrays['resid'])
+        else:
+            u.add_TopologyAttr('resids', [1] * len(atoms))
+
+        if 'names' in atoms.arrays:
+            u.add_TopologyAttr('names', atoms.arrays['names'])
+        else:
+            u.add_TopologyAttr('names', atoms.get_chemical_symbols())
+
+        if 'bonds' in atoms.arrays:
+            u.add_TopologyAttr('bonds', atoms.arrays['bonds'])
+        else:
+            u.add_TopologyAttr('bonds', [])
+        if 'angles' in atoms.arrays:
+            u.add_TopologyAttr('angles', atoms.arrays['angles'])
+        else:
+            u.add_TopologyAttr('angles', [])
+        if 'dihedrals' in atoms.arrays:
+            u.add_TopologyAttr('dihedrals', atoms.arrays['dihedrals'])
+        else:
+            u.add_TopologyAttr('dihedrals', [])
+        if 'impropers' in atoms.arrays:
+            u.add_TopologyAttr('impropers', atoms.arrays['impropers'])
+        else:
+            u.add_TopologyAttr('impropers', [])
+        return u
+
     @property
     def universe(self):
         # for Writer.write(universe), see Issue 49
         # Encapsulation in an accessor prevents the Universe from
         # having to keep a reference to itself,
-        #  which might be undesirable if it has a __del__ method.
+        # which might be undesirable if it has a __del__ method.
         # It is also cleaner than a weakref.
         return self
 

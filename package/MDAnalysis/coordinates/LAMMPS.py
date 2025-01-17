@@ -266,6 +266,8 @@ class DATAWriter(base.WriterBase):
         self.filename = util.filename(filename, ext='data', keep=True)
 
         self.convert_units = convert_units
+        self.convert_types = kwargs.pop('convert_types', False)
+        # self.lammps_types = np.array([])
 
         self.units = {'time': 'fs', 'length': 'Angstrom'}
         self.units['length'] = kwargs.pop('lengthunit', self.units['length'])
@@ -286,7 +288,28 @@ class DATAWriter(base.WriterBase):
             has_charges = True
 
         indices = atoms.indices + 1
-        types = atoms.types.astype(np.int32)
+
+
+        # check that types can be converted to ints if they aren't ints already
+        # MOD: if types are not ints, convert them to ints according to the
+        # alphabetical order of the letters in the type string
+        # example: 'C' -> 1, 'H' -> 2, 'O' -> 3
+
+
+        # if self.convert_types:
+        #     type_dict = {}
+        #     for i, type in enumerate(np.unique(atoms.types)):
+        #         type_dict[type] = i+1
+        #     lammps_types = np.array([type_dict[type] for type in atoms.types])
+        #     # lammps_types = atoms.types.astype('U1')
+        # else:
+        #     try:
+        #         lammps_types = atoms.types.astype(np.int32)
+        #     except ValueError:
+        #         errmsg = ("LAMMPS.DATAWriter: atom types must be convertible to "
+        #                   "integers")
+        #     raise ValueError(errmsg) from None
+
 
         moltags = data.get("molecule_tag", np.zeros(len(atoms), dtype=int))
 
@@ -295,12 +318,12 @@ class DATAWriter(base.WriterBase):
 
         if has_charges:
             for index, moltag, atype, charge, coords in zip(indices, moltags,
-                    types, charges, coordinates):
+                    self.lammps_types, charges, coordinates):
                 x, y, z = coords
                 self.f.write(f"{index:d} {moltag:d} {atype:d} {charge:f}"
                              f" {x:f} {y:f} {z:f}\n")
         else:
-            for index, moltag, atype, coords in zip(indices, moltags, types,
+            for index, moltag, atype, coords in zip(indices, moltags, self.lammps_types,
                     coordinates):
                 x, y, z = coords
                 self.f.write(f"{index:d} {moltag:d} {atype:d}"
@@ -322,11 +345,27 @@ class DATAWriter(base.WriterBase):
         self.f.write('Masses\n')
         self.f.write('\n')
         mass_dict = {}
-        max_type = max(atoms.types.astype(np.int32))
-        for atype in range(1, max_type+1):
+
+        ###############
+        # Note: This is a temporary fix and it wound't work if the atom types
+        # are already integers !!
+        # However: Maybe it is is best to not allow atom types to be integers
+        # at all, which in turn would be problematic if one wnats to parse
+        # a data file with integer atom types.
+        ###############
+        # max_type = max(self.lammps_types)
+        all_types = np.unique(atoms.types)
+        # for atype in range(1, max_type+1):
+        for atype in all_types:
             # search entire universe for mass info, not just writing selection
+            # if self.convert_types:
+                # reverse_type_dict = {v: k for k, v in self.type_dict.items()}
+                # masses = set(atoms.universe.atoms.select_atoms(
+                #      type=self.reverse_type_dict[atype]).masses)
             masses = set(atoms.universe.atoms.select_atoms(
-                'type {:d}'.format(atype)).masses)
+                # 'type {:d}'.format(atype)).masses)
+                'type {}'.format(atype)).masses)
+
             if len(masses) == 0:
                 mass_dict[atype] = 1.0
             else:
@@ -335,15 +374,42 @@ class DATAWriter(base.WriterBase):
                 raise ValueError('LAMMPS DATAWriter: to write data file, '+
                         'atoms with same type must have same mass')
         for atype, mass in mass_dict.items():
-            self.f.write('{:d} {:f}\n'.format(atype, mass))
+            self.f.write('{:d} {:f}\n'.format(self.type_dict[atype], mass))
 
     def _write_bonds(self, bonds):
         self.f.write('\n')
         self.f.write('{}\n'.format(btype_sections[bonds.btype]))
         self.f.write('\n')
+        # LAMMPS expects integer bond types, so hash btype pairs
+        def bond_hash(btype):
+            if self.convert_types:
+                typeA = int(self.type_dict[btype[0]])
+                typeB = int(self.type_dict[btype[1]])
+            else:
+                typeA = int(btype[0])
+                typeB = int(btype[1])
+            hash_btype = lambda ida, idb: int((ida + idb) / 2 * (ida + idb + 1) + idb)
+            if typeA < typeB:
+                return hash_btype(typeA, typeB)
+            else:
+                return hash_btype(typeB, typeA)
+            # map back to consecutive integer for LAMMPS
+
+            # bondtype = dict(enumerate([hash_btype(i,j) for i in range(1,max(typeA,typeB)+1) for j in range(i,max(typeA,typeB)+1)]))
+
+            # inv_bondtype = {v: k+1 for k, v in bondtype.items()}
+            # if typeA < typeB:
+            #     return inv_bondtype[hash_btype(typeA,typeB)]
+            # else:
+            #     return inv_bondtype[hash_btype(typeB,typeA)]
+        hashes_dict = {}
         for bond, i in zip(bonds, range(1, len(bonds)+1)):
+            # bid = bondid(bond.type)
+            bhash = bond_hash(bond.type)
+            if bhash not in hashes_dict:
+                hashes_dict[bhash] = i               
             try:
-                self.f.write('{:d} {:d} '.format(i, int(bond.type))+\
+                self.f.write('{:d} {:d} '.format(i, int(hashes_dict[bhash]))+\
                         ' '.join((bond.atoms.indices + 1).astype(str))+'\n')
             except TypeError:
                 errmsg = (f"LAMMPS DATAWriter: Trying to write bond, but bond "
@@ -403,12 +469,19 @@ class DATAWriter(base.WriterBase):
         # make sure to use atoms (Issue 46)
         atoms = selection.atoms
 
-        # check that types can be converted to ints if they aren't ints already
-        try:
-            atoms.types.astype(np.int32)
-        except ValueError:
-            errmsg = ("LAMMPS.DATAWriter: atom types must be convertible to "
-                      "integers")
+
+        if self.convert_types:
+            self.type_dict = {}
+            for i, type in enumerate(np.unique(atoms.types)):
+                self.type_dict[type] = i+1
+            self.lammps_types = np.array([self.type_dict[type] for type in atoms.types])
+            # lammps_types = atoms.types.astype('U1')
+        else:
+            try:
+                self.lammps_types = atoms.types.astype(np.int32)
+            except ValueError:
+                errmsg = ("LAMMPS.DATAWriter: atom types must be convertible to "
+                          "integers")
             raise ValueError(errmsg) from None
 
         try:
@@ -428,21 +501,21 @@ class DATAWriter(base.WriterBase):
                 ('dihedral', 'dihedrals'), ('improper', 'impropers')]
 
             for btype, attr_name in attrs:
-                features[btype] = atoms.__getattribute__(attr_name)
-                self.f.write('{:>12d}  {}\n'.format(len(features[btype]),
-                                                    attr_name))
-                features[btype] = features[btype].atomgroup_intersection(
+                if hasattr(atoms, attr_name):
+                    features[btype] = atoms.__getattribute__(attr_name)
+                    self.f.write('{:>12d}  {}\n'.format(len(features[btype]),
+                                                        attr_name))
+                    features[btype] = features[btype].atomgroup_intersection(
                                     atoms, strict=True)
 
             self.f.write('\n')
-            self.f.write('{:>12d}  atom types\n'.format(max(atoms.types.astype(np.int32))))
+            self.f.write('{:>12d}  atom types\n'.format(max(self.lammps_types)))
 
             for btype, attr in features.items():
                 self.f.write('{:>12d}  {} types\n'.format(len(attr.types()),
                                                           btype))
 
             self._write_dimensions(atoms.dimensions)
-
             self._write_masses(atoms)
             self._write_atoms(atoms, u.trajectory.ts.data)
             for attr in features.values():

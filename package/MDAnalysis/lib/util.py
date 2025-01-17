@@ -2552,3 +2552,19 @@ def store_init_arguments(func):
                         self._kwargs[key] = arg
         return func(self, *args, **kwargs)
     return wrapper
+
+def import_and_type_check(func):
+    """
+    Decorator to import a module only when the decorated function is called.
+
+    Args:
+        module_name (str): Name of the module to import.
+    """
+    @functools.wraps(func)
+    def wrapper(cls, atoms, **kwargs):
+        print(atoms)
+        ase = __import__('ase')
+        if not isinstance(atoms, ase.Atoms):
+            raise TypeError(f"Expected an ase.Atoms object, got {type(atoms)}")
+        return func(cls, atoms, **kwargs)
+    return wrapper

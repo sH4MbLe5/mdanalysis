@@ -653,7 +653,6 @@ class _ProtoStringSelection(Selection):
         for nm, ix in nmattr.namedict.items():
             if any(fnmatch.fnmatchcase(nm, val) for val in self.values):
                 matches.append(ix)
-
         # atomname indices for members of this group
         nmidx = nmattr.nmidx[getattr(group, self.level)]
 

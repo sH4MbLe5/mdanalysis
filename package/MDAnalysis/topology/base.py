@@ -92,6 +92,7 @@ class _Topologymeta(type):
                     _PARSER_HINTS[fmt_name] = classdict['_format_hint'].__func__
 
 class TopologyReaderBase(IOBase, metaclass=_Topologymeta):
+    
     """Base class for topology readers
 
     Parameters

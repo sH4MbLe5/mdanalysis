@@ -184,6 +184,12 @@ class GmxTopIterator:
         self.file_stack = [path]
         self.starting_file = path
 
+        # print(f'self._original_defines: {self._original_defines}')
+        # print(f'self.defines: {self.defines}')
+        # print(f'self.include_dir: {self.include_dir}')
+        # print(f'self.file_stack: {self.file_stack}')
+        # print(f'self.starting_file: {self.starting_file}')
+
     @property
     def current_file(self):
         return self.file_stack[-1]

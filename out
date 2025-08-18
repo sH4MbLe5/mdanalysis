@@ -1,0 +1,348 @@
+(build) f105ef10@fritz1:/home/atuin/f105ef/f105ef10/software/private/mdanalysis/package$ python -m pip install -e .
+Obtaining file:///home/atuin/f105ef/f105ef10/software/private/mdanalysis/package
+  Installing build dependencies ... done
+  Checking if build backend supports build_editable ... done
+  Getting requirements to build editable ... done
+  Preparing editable metadata (pyproject.toml) ... done
+Requirement already satisfied: numpy>=1.23.2 in /home/atuin/f105ef/f105ef10/software/private/conda/envs/build/lib/python3.11/site-packages (from MDAnalysis==2.9.0) (1.26.4)
+Requirement already satisfied: GridDataFormats>=0.4.0 in /home/atuin/f105ef/f105ef10/software/private/conda/envs/build/lib/python3.11/site-packages (from MDAnalysis==2.9.0) (1.0.2)
+Requirement already satisfied: mmtf-python>=1.0.0 in /home/atuin/f105ef/f105ef10/software/private/conda/envs/build/lib/python3.11/site-packages (from MDAnalysis==2.9.0) (1.1.3)
+Requirement already satisfied: joblib>=0.12 in /home/atuin/f105ef/f105ef10/software/private/conda/envs/build/lib/python3.11/site-packages (from MDAnalysis==2.9.0) (1.5.1)
+Requirement already satisfied: scipy>=1.5.0 in /home/atuin/f105ef/f105ef10/software/private/conda/envs/build/lib/python3.11/site-packages (from MDAnalysis==2.9.0) (1.16.0)
+Requirement already satisfied: matplotlib>=1.5.1 in /home/atuin/f105ef/f105ef10/software/private/conda/envs/build/lib/python3.11/site-packages (from MDAnalysis==2.9.0) (3.10.3)
+Requirement already satisfied: tqdm>=4.43.0 in /home/atuin/f105ef/f105ef10/software/private/conda/envs/build/lib/python3.11/site-packages (from MDAnalysis==2.9.0) (4.67.1)
+Requirement already satisfied: threadpoolctl in /home/atuin/f105ef/f105ef10/software/private/conda/envs/build/lib/python3.11/site-packages (from MDAnalysis==2.9.0) (3.6.0)
+Requirement already satisfied: packaging in /home/atuin/f105ef/f105ef10/software/private/conda/envs/build/lib/python3.11/site-packages (from MDAnalysis==2.9.0) (25.0)
+Requirement already satisfied: filelock in /home/atuin/f105ef/f105ef10/software/private/conda/envs/build/lib/python3.11/site-packages (from MDAnalysis==2.9.0) (3.18.0)
+Requirement already satisfied: mda-xdrlib in /home/atuin/f105ef/f105ef10/software/private/conda/envs/build/lib/python3.11/site-packages (from MDAnalysis==2.9.0) (0.2.0)
+Requirement already satisfied: mrcfile in /home/atuin/f105ef/f105ef10/software/private/conda/envs/build/lib/python3.11/site-packages (from GridDataFormats>=0.4.0->MDAnalysis==2.9.0) (1.5.4)
+Requirement already satisfied: contourpy>=1.0.1 in /home/atuin/f105ef/f105ef10/software/private/conda/envs/build/lib/python3.11/site-packages (from matplotlib>=1.5.1->MDAnalysis==2.9.0) (1.3.2)
+Requirement already satisfied: cycler>=0.10 in /home/atuin/f105ef/f105ef10/software/private/conda/envs/build/lib/python3.11/site-packages (from matplotlib>=1.5.1->MDAnalysis==2.9.0) (0.12.1)
+Requirement already satisfied: fonttools>=4.22.0 in /home/atuin/f105ef/f105ef10/software/private/conda/envs/build/lib/python3.11/site-packages (from matplotlib>=1.5.1->MDAnalysis==2.9.0) (4.58.5)
+Requirement already satisfied: kiwisolver>=1.3.1 in /home/atuin/f105ef/f105ef10/software/private/conda/envs/build/lib/python3.11/site-packages (from matplotlib>=1.5.1->MDAnalysis==2.9.0) (1.4.8)
+Requirement already satisfied: pillow>=8 in /home/atuin/f105ef/f105ef10/software/private/conda/envs/build/lib/python3.11/site-packages (from matplotlib>=1.5.1->MDAnalysis==2.9.0) (11.3.0)
+Requirement already satisfied: pyparsing>=2.3.1 in /home/atuin/f105ef/f105ef10/software/private/conda/envs/build/lib/python3.11/site-packages (from matplotlib>=1.5.1->MDAnalysis==2.9.0) (3.2.3)
+Requirement already satisfied: python-dateutil>=2.7 in /home/atuin/f105ef/f105ef10/software/private/conda/envs/build/lib/python3.11/site-packages (from matplotlib>=1.5.1->MDAnalysis==2.9.0) (2.9.0.post0)
+Requirement already satisfied: msgpack>=1.0.0 in /home/atuin/f105ef/f105ef10/software/private/conda/envs/build/lib/python3.11/site-packages (from mmtf-python>=1.0.0->MDAnalysis==2.9.0) (1.1.1)
+Requirement already satisfied: six>=1.5 in /home/atuin/f105ef/f105ef10/software/private/conda/envs/build/lib/python3.11/site-packages (from python-dateutil>=2.7->matplotlib>=1.5.1->MDAnalysis==2.9.0) (1.17.0)
+Building wheels for collected packages: MDAnalysis
+  Building editable for MDAnalysis (pyproject.toml) ... error
+  error: subprocess-exited-with-error
+  
+  × Building editable for MDAnalysis (pyproject.toml) did not run successfully.
+  │ exit code: 1
+  ╰─> [308 lines of output]
+      Attempting to autodetect OpenMP support... Compiler supports OpenMP
+      Will attempt to use Cython.
+      /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/setuptools/_distutils/dist.py:289: UserWarning: Unknown distribution option: 'test_suite'
+        warnings.warn(msg)
+      /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/setuptools/_distutils/dist.py:289: UserWarning: Unknown distribution option: 'tests_require'
+        warnings.warn(msg)
+      /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/setuptools/config/_apply_pyprojecttoml.py:82: SetuptoolsDeprecationWarning: `project.license` as a TOML table is deprecated
+      !!
+      
+              ********************************************************************************
+              Please use a simple string containing a SPDX expression for `project.license`. You can also use `project.license-files`. (Both options available on setuptools>=77.0.0).
+      
+              By 2026-Feb-18, you need to update your project and remove deprecated calls
+              or your builds will no longer be supported.
+      
+              See https://packaging.python.org/en/latest/guides/writing-pyproject-toml/#license for details.
+              ********************************************************************************
+      
+      !!
+        corresp(dist, value, root_dir)
+      /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/setuptools/config/_apply_pyprojecttoml.py:61: SetuptoolsDeprecationWarning: License classifiers are deprecated.
+      !!
+      
+              ********************************************************************************
+              Please consider removing the following classifiers in favor of a SPDX license expression:
+      
+              License :: OSI Approved :: GNU Lesser General Public License v3 or later (LGPLv3+)
+      
+              See https://packaging.python.org/en/latest/guides/writing-pyproject-toml/#license for details.
+              ********************************************************************************
+      
+      !!
+        dist._finalize_license_expression()
+      /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/setuptools/dist.py:759: SetuptoolsDeprecationWarning: License classifiers are deprecated.
+      !!
+      
+              ********************************************************************************
+              Please consider removing the following classifiers in favor of a SPDX license expression:
+      
+              License :: OSI Approved :: GNU Lesser General Public License v3 or later (LGPLv3+)
+      
+              See https://packaging.python.org/en/latest/guides/writing-pyproject-toml/#license for details.
+              ********************************************************************************
+      
+      !!
+        self._finalize_license_expression()
+      running editable_wheel
+      creating /tmp/pip-wheel-hbgqpg43/.tmp-tjik0732/MDAnalysis.egg-info
+      writing /tmp/pip-wheel-hbgqpg43/.tmp-tjik0732/MDAnalysis.egg-info/PKG-INFO
+      writing dependency_links to /tmp/pip-wheel-hbgqpg43/.tmp-tjik0732/MDAnalysis.egg-info/dependency_links.txt
+      writing requirements to /tmp/pip-wheel-hbgqpg43/.tmp-tjik0732/MDAnalysis.egg-info/requires.txt
+      writing top-level names to /tmp/pip-wheel-hbgqpg43/.tmp-tjik0732/MDAnalysis.egg-info/top_level.txt
+      writing manifest file '/tmp/pip-wheel-hbgqpg43/.tmp-tjik0732/MDAnalysis.egg-info/SOURCES.txt'
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/arrayobject.h won't be automatically included in the manifest: the path must be relative
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/arrayscalars.h won't be automatically included in the manifest: the path must be relative
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/ndarrayobject.h won't be automatically included in the manifest: the path must be relative
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/ndarraytypes.h won't be automatically included in the manifest: the path must be relative
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/ufuncobject.h won't be automatically included in the manifest: the path must be relative
+      dependency /home/atuin/f105ef/f105ef10/software/private/mdanalysis/package/MDAnalysis/lib/include/calc_distances.h won't be automatically included in the manifest: the path must be relative
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/arrayobject.h won't be automatically included in the manifest: the path must be relative
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/arrayscalars.h won't be automatically included in the manifest: the path must be relative
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/ndarrayobject.h won't be automatically included in the manifest: the path must be relative
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/ndarraytypes.h won't be automatically included in the manifest: the path must be relative
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/ufuncobject.h won't be automatically included in the manifest: the path must be relative
+      dependency /home/atuin/f105ef/f105ef10/software/private/mdanalysis/package/MDAnalysis/lib/include/calc_distances.h won't be automatically included in the manifest: the path must be relative
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/arrayobject.h won't be automatically included in the manifest: the path must be relative
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/arrayscalars.h won't be automatically included in the manifest: the path must be relative
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/ndarrayobject.h won't be automatically included in the manifest: the path must be relative
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/ndarraytypes.h won't be automatically included in the manifest: the path must be relative
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/ufuncobject.h won't be automatically included in the manifest: the path must be relative
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/arrayobject.h won't be automatically included in the manifest: the path must be relative
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/arrayscalars.h won't be automatically included in the manifest: the path must be relative
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/ndarrayobject.h won't be automatically included in the manifest: the path must be relative
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/ndarraytypes.h won't be automatically included in the manifest: the path must be relative
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/ufuncobject.h won't be automatically included in the manifest: the path must be relative
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/arrayobject.h won't be automatically included in the manifest: the path must be relative
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/arrayscalars.h won't be automatically included in the manifest: the path must be relative
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/ndarrayobject.h won't be automatically included in the manifest: the path must be relative
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/ndarraytypes.h won't be automatically included in the manifest: the path must be relative
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/ufuncobject.h won't be automatically included in the manifest: the path must be relative
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/arrayobject.h won't be automatically included in the manifest: the path must be relative
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/arrayscalars.h won't be automatically included in the manifest: the path must be relative
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/ndarrayobject.h won't be automatically included in the manifest: the path must be relative
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/ndarraytypes.h won't be automatically included in the manifest: the path must be relative
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/ufuncobject.h won't be automatically included in the manifest: the path must be relative
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/arrayobject.h won't be automatically included in the manifest: the path must be relative
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/arrayscalars.h won't be automatically included in the manifest: the path must be relative
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/ndarrayobject.h won't be automatically included in the manifest: the path must be relative
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/ndarraytypes.h won't be automatically included in the manifest: the path must be relative
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/ufuncobject.h won't be automatically included in the manifest: the path must be relative
+      dependency /home/atuin/f105ef/f105ef10/software/private/mdanalysis/package/MDAnalysis/analysis/encore/clustering/include/ap.h won't be automatically included in the manifest: the path must be relative
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/arrayobject.h won't be automatically included in the manifest: the path must be relative
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/arrayscalars.h won't be automatically included in the manifest: the path must be relative
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/ndarrayobject.h won't be automatically included in the manifest: the path must be relative
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/ndarraytypes.h won't be automatically included in the manifest: the path must be relative
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/ufuncobject.h won't be automatically included in the manifest: the path must be relative
+      dependency /home/atuin/f105ef/f105ef10/software/private/mdanalysis/package/MDAnalysis/analysis/encore/dimensionality_reduction/include/spe.h won't be automatically included in the manifest: the path must be relative
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/arrayobject.h won't be automatically included in the manifest: the path must be relative
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/arrayscalars.h won't be automatically included in the manifest: the path must be relative
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/ndarrayobject.h won't be automatically included in the manifest: the path must be relative
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/ndarraytypes.h won't be automatically included in the manifest: the path must be relative
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/ufuncobject.h won't be automatically included in the manifest: the path must be relative
+      dependency /home/atuin/f105ef/f105ef10/software/private/mdanalysis/package/MDAnalysis/lib/include/calc_distances.h won't be automatically included in the manifest: the path must be relative
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/arrayobject.h won't be automatically included in the manifest: the path must be relative
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/arrayscalars.h won't be automatically included in the manifest: the path must be relative
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/ndarrayobject.h won't be automatically included in the manifest: the path must be relative
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/ndarraytypes.h won't be automatically included in the manifest: the path must be relative
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/ufuncobject.h won't be automatically included in the manifest: the path must be relative
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/arrayobject.h won't be automatically included in the manifest: the path must be relative
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/arrayscalars.h won't be automatically included in the manifest: the path must be relative
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/ndarrayobject.h won't be automatically included in the manifest: the path must be relative
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/ndarraytypes.h won't be automatically included in the manifest: the path must be relative
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/ufuncobject.h won't be automatically included in the manifest: the path must be relative
+      dependency /home/atuin/f105ef/f105ef10/software/private/mdanalysis/package/MDAnalysis/lib/include/calc_distances.h won't be automatically included in the manifest: the path must be relative
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/arrayobject.h won't be automatically included in the manifest: the path must be relative
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/arrayscalars.h won't be automatically included in the manifest: the path must be relative
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/ndarrayobject.h won't be automatically included in the manifest: the path must be relative
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/ndarraytypes.h won't be automatically included in the manifest: the path must be relative
+      dependency /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/ufuncobject.h won't be automatically included in the manifest: the path must be relative
+      reading manifest file '/tmp/pip-wheel-hbgqpg43/.tmp-tjik0732/MDAnalysis.egg-info/SOURCES.txt'
+      reading manifest template 'MANIFEST.in'
+      warning: no previously-included files matching 'doc/html/html' found anywhere in distribution
+      warning: no previously-included files matching '*.pyc' found anywhere in distribution
+      warning: no previously-included files matching '*.pyo' found anywhere in distribution
+      warning: no previously-included files matching '*.pyd' found anywhere in distribution
+      warning: no previously-included files matching '*~' found anywhere in distribution
+      warning: no previously-included files matching '.git' found anywhere in distribution
+      adding license file 'LICENSE'
+      adding license file 'AUTHORS'
+      writing manifest file '/tmp/pip-wheel-hbgqpg43/.tmp-tjik0732/MDAnalysis.egg-info/SOURCES.txt'
+      creating '/tmp/pip-wheel-hbgqpg43/.tmp-tjik0732/mdanalysis-2.9.0.dist-info'
+      creating /tmp/pip-wheel-hbgqpg43/.tmp-tjik0732/mdanalysis-2.9.0.dist-info/WHEEL
+      running build_py
+      running build_ext
+      building 'MDAnalysis.lib.formats.libdcd' extension
+      creating /tmp/tmprkh5e3pr.build-temp/MDAnalysis/lib/formats
+      gcc -pthread -B /home/atuin/f105ef/f105ef10/software/private/conda/envs/build/compiler_compat -DNDEBUG -fwrapv -O2 -Wall -fPIC -O2 -isystem /home/atuin/f105ef/f105ef10/software/private/conda/envs/build/include -fPIC -O2 -isystem /home/atuin/f105ef/f105ef10/software/private/conda/envs/build/include -fPIC -I/home/atuin/f105ef/f105ef10/software/private/mdanalysis/package/MDAnalysis/lib/formats -I/tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include -I/home/atuin/f105ef/f105ef10/software/private/mdanalysis/package/MDAnalysis/lib/formats/include -I/home/atuin/f105ef/f105ef10/software/private/conda/envs/build/include/python3.11 -c MDAnalysis/lib/formats/libdcd.c -o /tmp/tmprkh5e3pr.build-temp/MDAnalysis/lib/formats/libdcd.o -std=c11 -O3 -funroll-loops -fsigned-zeros
+      In file included from MDAnalysis/lib/formats/libdcd.c:1164:
+      MDAnalysis/lib/formats/include/readdcd.h: In function ‘write_dcdheader’:
+      MDAnalysis/lib/formats/include/readdcd.h:698:14: warning: unused variable ‘tmbuf’ [-Wunused-variable]
+         struct tm *tmbuf;
+                    ^~~~~
+      MDAnalysis/lib/formats/include/readdcd.h:697:10: warning: unused variable ‘cur_time’ [-Wunused-variable]
+         time_t cur_time;
+                ^~~~~~~~
+      In file included from MDAnalysis/lib/formats/include/readdcd.h:25,
+                       from MDAnalysis/lib/formats/libdcd.c:1164:
+      At top level:
+      MDAnalysis/lib/formats/include/endianswap.h:96:13: warning: ‘swap2_aligned’ defined but not used [-Wunused-function]
+       static void swap2_aligned(void *v, long ndata) {
+                   ^~~~~~~~~~~~~
+      MDAnalysis/lib/formats/include/endianswap.h:32:13: warning: ‘swap2_unaligned’ defined but not used [-Wunused-function]
+       static void swap2_unaligned(void *v, long ndata) {
+                   ^~~~~~~~~~~~~~~
+      In file included from MDAnalysis/lib/formats/libdcd.c:1163:
+      MDAnalysis/lib/formats/include/fastio.h:453:12: warning: ‘fio_write_str’ defined but not used [-Wunused-function]
+       static int fio_write_str(fio_fd fd, const char *str) {
+                  ^~~~~~~~~~~~~
+      MDAnalysis/lib/formats/include/fastio.h:449:12: warning: ‘fio_read_int32’ defined but not used [-Wunused-function]
+       static int fio_read_int32(fio_fd fd, int *i) {
+                  ^~~~~~~~~~~~~~
+      creating /tmp/tmptx2txfyv.build-lib/MDAnalysis/lib/formats
+      gcc -pthread -B /home/atuin/f105ef/f105ef10/software/private/conda/envs/build/compiler_compat -shared -Wl,--allow-shlib-undefined -Wl,-rpath,/home/atuin/f105ef/f105ef10/software/private/conda/envs/build/lib -Wl,-rpath-link,/home/atuin/f105ef/f105ef10/software/private/conda/envs/build/lib -L/home/atuin/f105ef/f105ef10/software/private/conda/envs/build/lib -Wl,--allow-shlib-undefined -Wl,-rpath,/home/atuin/f105ef/f105ef10/software/private/conda/envs/build/lib -Wl,-rpath-link,/home/atuin/f105ef/f105ef10/software/private/conda/envs/build/lib -L/home/atuin/f105ef/f105ef10/software/private/conda/envs/build/lib /tmp/tmprkh5e3pr.build-temp/MDAnalysis/lib/formats/libdcd.o -o /tmp/tmptx2txfyv.build-lib/MDAnalysis/lib/formats/libdcd.cpython-311-x86_64-linux-gnu.so
+      building 'MDAnalysis.lib.c_distances' extension
+      gcc -pthread -B /home/atuin/f105ef/f105ef10/software/private/conda/envs/build/compiler_compat -DNDEBUG -fwrapv -O2 -Wall -fPIC -O2 -isystem /home/atuin/f105ef/f105ef10/software/private/conda/envs/build/include -fPIC -O2 -isystem /home/atuin/f105ef/f105ef10/software/private/conda/envs/build/include -fPIC -I/tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include -I/home/atuin/f105ef/f105ef10/software/private/mdanalysis/package/MDAnalysis/lib/include -I/home/atuin/f105ef/f105ef10/software/private/conda/envs/build/include/python3.11 -c MDAnalysis/lib/c_distances.c -o /tmp/tmprkh5e3pr.build-temp/MDAnalysis/lib/c_distances.o -std=c11 -O3 -funroll-loops -fsigned-zeros
+      gcc -pthread -B /home/atuin/f105ef/f105ef10/software/private/conda/envs/build/compiler_compat -shared -Wl,--allow-shlib-undefined -Wl,-rpath,/home/atuin/f105ef/f105ef10/software/private/conda/envs/build/lib -Wl,-rpath-link,/home/atuin/f105ef/f105ef10/software/private/conda/envs/build/lib -L/home/atuin/f105ef/f105ef10/software/private/conda/envs/build/lib -Wl,--allow-shlib-undefined -Wl,-rpath,/home/atuin/f105ef/f105ef10/software/private/conda/envs/build/lib -Wl,-rpath-link,/home/atuin/f105ef/f105ef10/software/private/conda/envs/build/lib -L/home/atuin/f105ef/f105ef10/software/private/conda/envs/build/lib /tmp/tmprkh5e3pr.build-temp/MDAnalysis/lib/c_distances.o -lm -o /tmp/tmptx2txfyv.build-lib/MDAnalysis/lib/c_distances.cpython-311-x86_64-linux-gnu.so
+      building 'MDAnalysis.lib.c_distances_openmp' extension
+      gcc -pthread -B /home/atuin/f105ef/f105ef10/software/private/conda/envs/build/compiler_compat -DNDEBUG -fwrapv -O2 -Wall -fPIC -O2 -isystem /home/atuin/f105ef/f105ef10/software/private/conda/envs/build/include -fPIC -O2 -isystem /home/atuin/f105ef/f105ef10/software/private/conda/envs/build/include -fPIC -DPARALLEL -I/tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include -I/home/atuin/f105ef/f105ef10/software/private/mdanalysis/package/MDAnalysis/lib/include -I/home/atuin/f105ef/f105ef10/software/private/conda/envs/build/include/python3.11 -c MDAnalysis/lib/c_distances_openmp.c -o /tmp/tmprkh5e3pr.build-temp/MDAnalysis/lib/c_distances_openmp.o -fopenmp -std=c11 -O3 -funroll-loops -fsigned-zeros
+      gcc -pthread -B /home/atuin/f105ef/f105ef10/software/private/conda/envs/build/compiler_compat -shared -Wl,--allow-shlib-undefined -Wl,-rpath,/home/atuin/f105ef/f105ef10/software/private/conda/envs/build/lib -Wl,-rpath-link,/home/atuin/f105ef/f105ef10/software/private/conda/envs/build/lib -L/home/atuin/f105ef/f105ef10/software/private/conda/envs/build/lib -Wl,--allow-shlib-undefined -Wl,-rpath,/home/atuin/f105ef/f105ef10/software/private/conda/envs/build/lib -Wl,-rpath-link,/home/atuin/f105ef/f105ef10/software/private/conda/envs/build/lib -L/home/atuin/f105ef/f105ef10/software/private/conda/envs/build/lib /tmp/tmprkh5e3pr.build-temp/MDAnalysis/lib/c_distances_openmp.o -lm -lgomp -o /tmp/tmptx2txfyv.build-lib/MDAnalysis/lib/c_distances_openmp.cpython-311-x86_64-linux-gnu.so -fopenmp
+      building 'MDAnalysis.lib.qcprot' extension
+      gcc -pthread -B /home/atuin/f105ef/f105ef10/software/private/conda/envs/build/compiler_compat -DNDEBUG -fwrapv -O2 -Wall -fPIC -O2 -isystem /home/atuin/f105ef/f105ef10/software/private/conda/envs/build/include -fPIC -O2 -isystem /home/atuin/f105ef/f105ef10/software/private/conda/envs/build/include -fPIC -I/tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include -I/home/atuin/f105ef/f105ef10/software/private/conda/envs/build/include/python3.11 -c MDAnalysis/lib/qcprot.c -o /tmp/tmprkh5e3pr.build-temp/MDAnalysis/lib/qcprot.o -std=c11 -O3 -funroll-loops -fsigned-zeros
+      gcc -pthread -B /home/atuin/f105ef/f105ef10/software/private/conda/envs/build/compiler_compat -shared -Wl,--allow-shlib-undefined -Wl,-rpath,/home/atuin/f105ef/f105ef10/software/private/conda/envs/build/lib -Wl,-rpath-link,/home/atuin/f105ef/f105ef10/software/private/conda/envs/build/lib -L/home/atuin/f105ef/f105ef10/software/private/conda/envs/build/lib -Wl,--allow-shlib-undefined -Wl,-rpath,/home/atuin/f105ef/f105ef10/software/private/conda/envs/build/lib -Wl,-rpath-link,/home/atuin/f105ef/f105ef10/software/private/conda/envs/build/lib -L/home/atuin/f105ef/f105ef10/software/private/conda/envs/build/lib /tmp/tmprkh5e3pr.build-temp/MDAnalysis/lib/qcprot.o -o /tmp/tmptx2txfyv.build-lib/MDAnalysis/lib/qcprot.cpython-311-x86_64-linux-gnu.so
+      building 'MDAnalysis.lib._transformations' extension
+      creating /tmp/tmprkh5e3pr.build-temp/MDAnalysis/lib/src/transformations
+      gcc -pthread -B /home/atuin/f105ef/f105ef10/software/private/conda/envs/build/compiler_compat -DNDEBUG -fwrapv -O2 -Wall -fPIC -O2 -isystem /home/atuin/f105ef/f105ef10/software/private/conda/envs/build/include -fPIC -O2 -isystem /home/atuin/f105ef/f105ef10/software/private/conda/envs/build/include -fPIC -I/tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include -I/home/atuin/f105ef/f105ef10/software/private/conda/envs/build/include/python3.11 -c MDAnalysis/lib/src/transformations/transformations.c -o /tmp/tmprkh5e3pr.build-temp/MDAnalysis/lib/src/transformations/transformations.o -std=c11 -O3 -funroll-loops -fsigned-zeros
+      In file included from /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/arrayobject.h:5,
+                       from MDAnalysis/lib/src/transformations/transformations.c:73:
+      MDAnalysis/lib/src/transformations/transformations.c: In function ‘PyConverter_DoubleArray’:
+      MDAnalysis/lib/src/transformations/transformations.c:778:53: error: ‘NPY_IN_ARRAY’ undeclared (first use in this function); did you mean ‘NPY_FR_ERROR’?
+           *address = PyArray_FROM_OTF(object, NPY_DOUBLE, NPY_IN_ARRAY);
+                                                           ^~~~~~~~~~~~
+      /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/ndarrayobject.h:91:28: note: in definition of macro ‘PyArray_FROM_OTF’
+                               (((flags) & NPY_ARRAY_ENSURECOPY) ? \
+                                  ^~~~~
+      MDAnalysis/lib/src/transformations/transformations.c:778:53: note: each undeclared identifier is reported only once for each function it appears in
+           *address = PyArray_FROM_OTF(object, NPY_DOUBLE, NPY_IN_ARRAY);
+                                                           ^~~~~~~~~~~~
+      /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/ndarrayobject.h:91:28: note: in definition of macro ‘PyArray_FROM_OTF’
+                               (((flags) & NPY_ARRAY_ENSURECOPY) ? \
+                                  ^~~~~
+      MDAnalysis/lib/src/transformations/transformations.c: In function ‘PyConverter_AnyDoubleArray’:
+      MDAnalysis/lib/src/transformations/transformations.c:794:57: error: ‘NPY_ALIGNED’ undeclared (first use in this function); did you mean ‘Py_ALIGNED’?
+               *address = PyArray_FROM_OTF(object, NPY_DOUBLE, NPY_ALIGNED);
+                                                               ^~~~~~~~~~~
+      /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/ndarrayobject.h:91:28: note: in definition of macro ‘PyArray_FROM_OTF’
+                               (((flags) & NPY_ARRAY_ENSURECOPY) ? \
+                                  ^~~~~
+      MDAnalysis/lib/src/transformations/transformations.c: In function ‘PyConverter_DoubleArrayOrNone’:
+      MDAnalysis/lib/src/transformations/transformations.c:811:57: error: ‘NPY_IN_ARRAY’ undeclared (first use in this function); did you mean ‘NPY_FR_ERROR’?
+               *address = PyArray_FROM_OTF(object, NPY_DOUBLE, NPY_IN_ARRAY);
+                                                               ^~~~~~~~~~~~
+      /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/ndarrayobject.h:91:28: note: in definition of macro ‘PyArray_FROM_OTF’
+                               (((flags) & NPY_ARRAY_ENSURECOPY) ? \
+                                  ^~~~~
+      MDAnalysis/lib/src/transformations/transformations.c: In function ‘PyConverter_DoubleMatrix44’:
+      MDAnalysis/lib/src/transformations/transformations.c:826:53: error: ‘NPY_IN_ARRAY’ undeclared (first use in this function); did you mean ‘NPY_FR_ERROR’?
+           *address = PyArray_FROM_OTF(object, NPY_DOUBLE, NPY_IN_ARRAY);
+                                                           ^~~~~~~~~~~~
+      /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/ndarrayobject.h:91:28: note: in definition of macro ‘PyArray_FROM_OTF’
+                               (((flags) & NPY_ARRAY_ENSURECOPY) ? \
+                                  ^~~~~
+      MDAnalysis/lib/src/transformations/transformations.c: In function ‘PyConverter_DoubleMatrix44Copy’:
+      MDAnalysis/lib/src/transformations/transformations.c:849:33: error: ‘NPY_ENSURECOPY’ undeclared (first use in this function); did you mean ‘NPY_ITER_COPY’?
+                                       NPY_ENSURECOPY|NPY_IN_ARRAY);
+                                       ^~~~~~~~~~~~~~
+      /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/ndarrayobject.h:91:28: note: in definition of macro ‘PyArray_FROM_OTF’
+                               (((flags) & NPY_ARRAY_ENSURECOPY) ? \
+                                  ^~~~~
+      MDAnalysis/lib/src/transformations/transformations.c:849:48: error: ‘NPY_IN_ARRAY’ undeclared (first use in this function); did you mean ‘NPY_FR_ERROR’?
+                                       NPY_ENSURECOPY|NPY_IN_ARRAY);
+                                                      ^~~~~~~~~~~~
+      /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/ndarrayobject.h:91:28: note: in definition of macro ‘PyArray_FROM_OTF’
+                               (((flags) & NPY_ARRAY_ENSURECOPY) ? \
+                                  ^~~~~
+      MDAnalysis/lib/src/transformations/transformations.c: In function ‘PyConverter_DoubleVector3’:
+      MDAnalysis/lib/src/transformations/transformations.c:871:53: error: ‘NPY_IN_ARRAY’ undeclared (first use in this function); did you mean ‘NPY_FR_ERROR’?
+           *address = PyArray_FROM_OTF(object, NPY_DOUBLE, NPY_IN_ARRAY);
+                                                           ^~~~~~~~~~~~
+      /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/ndarrayobject.h:91:28: note: in definition of macro ‘PyArray_FROM_OTF’
+                               (((flags) & NPY_ARRAY_ENSURECOPY) ? \
+                                  ^~~~~
+      MDAnalysis/lib/src/transformations/transformations.c: In function ‘PyConverter_DoubleVector4’:
+      MDAnalysis/lib/src/transformations/transformations.c:893:53: error: ‘NPY_IN_ARRAY’ undeclared (first use in this function); did you mean ‘NPY_FR_ERROR’?
+           *address = PyArray_FROM_OTF(object, NPY_DOUBLE, NPY_IN_ARRAY);
+                                                           ^~~~~~~~~~~~
+      /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/ndarrayobject.h:91:28: note: in definition of macro ‘PyArray_FROM_OTF’
+                               (((flags) & NPY_ARRAY_ENSURECOPY) ? \
+                                  ^~~~~
+      MDAnalysis/lib/src/transformations/transformations.c: In function ‘PyConverter_DoubleVector4Copy’:
+      MDAnalysis/lib/src/transformations/transformations.c:916:33: error: ‘NPY_ENSURECOPY’ undeclared (first use in this function); did you mean ‘NPY_ITER_COPY’?
+                                       NPY_ENSURECOPY|NPY_IN_ARRAY);
+                                       ^~~~~~~~~~~~~~
+      /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/ndarrayobject.h:91:28: note: in definition of macro ‘PyArray_FROM_OTF’
+                               (((flags) & NPY_ARRAY_ENSURECOPY) ? \
+                                  ^~~~~
+      MDAnalysis/lib/src/transformations/transformations.c:916:48: error: ‘NPY_IN_ARRAY’ undeclared (first use in this function); did you mean ‘NPY_FR_ERROR’?
+                                       NPY_ENSURECOPY|NPY_IN_ARRAY);
+                                                      ^~~~~~~~~~~~
+      /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/ndarrayobject.h:91:28: note: in definition of macro ‘PyArray_FROM_OTF’
+                               (((flags) & NPY_ARRAY_ENSURECOPY) ? \
+                                  ^~~~~
+      MDAnalysis/lib/src/transformations/transformations.c: In function ‘PyConverter_DoubleVector3OrNone’:
+      MDAnalysis/lib/src/transformations/transformations.c:941:57: error: ‘NPY_IN_ARRAY’ undeclared (first use in this function); did you mean ‘NPY_FR_ERROR’?
+               *address = PyArray_FROM_OTF(object, NPY_DOUBLE, NPY_IN_ARRAY);
+                                                               ^~~~~~~~~~~~
+      /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/ndarrayobject.h:91:28: note: in definition of macro ‘PyArray_FROM_OTF’
+                               (((flags) & NPY_ARRAY_ENSURECOPY) ? \
+                                  ^~~~~
+      MDAnalysis/lib/src/transformations/transformations.c: In function ‘py_superimposition_matrix’:
+      MDAnalysis/lib/src/transformations/transformations.c:1837: warning: ignoring #pragma vector always [-Wunknown-pragmas]
+                       #pragma vector always
+      
+      MDAnalysis/lib/src/transformations/transformations.c:1954: warning: ignoring #pragma vector always [-Wunknown-pragmas]
+                           #pragma vector always
+      
+      MDAnalysis/lib/src/transformations/transformations.c:1978: warning: ignoring #pragma vector always [-Wunknown-pragmas]
+                           #pragma vector always
+      
+      In file included from /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/arrayobject.h:5,
+                       from MDAnalysis/lib/src/transformations/transformations.c:73:
+      MDAnalysis/lib/src/transformations/transformations.c: In function ‘py_inverse_matrix’:
+      MDAnalysis/lib/src/transformations/transformations.c:3140:48: error: ‘NPY_IN_ARRAY’ undeclared (first use in this function); did you mean ‘NPY_FR_ERROR’?
+                                                      NPY_IN_ARRAY);
+                                                      ^~~~~~~~~~~~
+      /tmp/pip-build-env-2846yedz/overlay/lib/python3.11/site-packages/numpy/_core/include/numpy/ndarrayobject.h:91:28: note: in definition of macro ‘PyArray_FROM_OTF’
+                               (((flags) & NPY_ARRAY_ENSURECOPY) ? \
+                                  ^~~~~
+      MDAnalysis/lib/src/transformations/transformations.c: In function ‘py_vector_norm’:
+      MDAnalysis/lib/src/transformations/transformations.c:3414: warning: ignoring #pragma vector always [-Wunknown-pragmas]
+                   #pragma vector always
+      
+      MDAnalysis/lib/src/transformations/transformations.c:3495: warning: ignoring #pragma vector always [-Wunknown-pragmas]
+                       #pragma vector always
+      
+      MDAnalysis/lib/src/transformations/transformations.c: In function ‘py_unit_vector’:
+      MDAnalysis/lib/src/transformations/transformations.c:3597: warning: ignoring #pragma vector always [-Wunknown-pragmas]
+                   #pragma vector always
+      
+      MDAnalysis/lib/src/transformations/transformations.c:3602: warning: ignoring #pragma vector always [-Wunknown-pragmas]
+                   #pragma vector always
+      
+      MDAnalysis/lib/src/transformations/transformations.c:3666: warning: ignoring #pragma vector always [-Wunknown-pragmas]
+                       #pragma vector always
+      
+      MDAnalysis/lib/src/transformations/transformations.c:3671: warning: ignoring #pragma vector always [-Wunknown-pragmas]
+                       #pragma vector always
+      
+      At top level:
+      MDAnalysis/lib/src/transformations/transformations.c:910:1: warning: ‘PyConverter_DoubleVector4Copy’ defined but not used [-Wunused-function]
+       PyConverter_DoubleVector4Copy(
+       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      MDAnalysis/lib/src/transformations/transformations.c:804:1: warning: ‘PyConverter_DoubleArrayOrNone’ defined but not used [-Wunused-function]
+       PyConverter_DoubleArrayOrNone(
+       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      MDAnalysis/lib/src/transformations/transformations.c:774:1: warning: ‘PyConverter_DoubleArray’ defined but not used [-Wunused-function]
+       PyConverter_DoubleArray(
+       ^~~~~~~~~~~~~~~~~~~~~~~
+      error: command '/usr/bin/gcc' failed with exit code 1
+      [end of output]
+  
+  note: This error originates from a subprocess, and is likely not a problem with pip.
+  ERROR: Failed building editable for MDAnalysis
+Failed to build MDAnalysis
+ERROR: Failed to build installable wheels for some pyproject.toml based projects (MDAnalysis)

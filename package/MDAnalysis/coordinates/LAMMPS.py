@@ -237,11 +237,11 @@ class DATAReader(base.SingleFrameReaderBase):
 
     @store_init_arguments
     def __init__(self, filename, **kwargs):
-        n_atoms = kwargs.pop("n_atoms", None)
-        if n_atoms is None:  # this should be done by parsing DATA first
+        self.n_atoms = kwargs.pop("n_atoms", None)
+        if self.n_atoms is None:  # this should be done by parsing DATA first
             raise ValueError("DATAReader requires n_atoms keyword")
         self.atom_style = kwargs.pop("atom_style", None)
-        super(DATAReader, self).__init__(filename, n_atoms=n_atoms, **kwargs)
+        super(DATAReader, self).__init__(filename, n_atoms=self.n_atoms, **kwargs)
 
     def _read_first_frame(self):
         with DATAParser(self.filename) as p:
@@ -275,18 +275,22 @@ class DATAWriter(base.WriterBase):
     is measured in Angstroms and velocity is measured in Angstroms per
     femtosecond. To write in different units, specify `lengthunit`
 
-    If atom types are not already positive integers, the user must set them
-    to be positive integers, because the writer will not automatically
-    assign new types.
+    If atom types are not already positive integers, the user can set
+    "convert_units" to True, which will convert all atom types to integer
+    units in ascending alphabetical order
+    (e.g. for types ['H', 'O', 'C', 'C1'] --> ['C', 'C1', 'H', 'O']
+    --> {'C': 1, 'C1': 2, 'H': 3, 'O': 4} --> [1, 2, 3, 4]).
 
     To preserve numerical atom types when writing a selection, the Masses
     section will have entries for each atom type up to the maximum atom type.
     If the universe does not contain atoms of some type in
     {1, ... max(atom_types)}, then the mass for that type will be set to 1.
 
-    In order to write bonds, each selected bond type must be explicitly set to
-    an integer >= 1.
-
+    When writing bonded information, equivalent bonded interactions are identified
+    and assigned the same unique integer tuple, avoiding duplication of types for
+    interactions that are physically identical but appear different
+    (e.g. bonds between atoms of types (1, 2) and (2, 1), 
+    or impropers for atoms of types (1, 2, 3, 4) and (1, 4, 3, 2) are the same).
     """
 
     format = "DATA"
@@ -304,6 +308,8 @@ class DATAWriter(base.WriterBase):
         self.filename = util.filename(filename, ext="data", keep=True)
 
         self.convert_units = convert_units
+        self.convert_types = kwargs.pop('convert_types', False)
+        self.only_return_assignments = kwargs.pop('only_return_assignments', False)
 
         self.units = {"time": "fs", "length": "Angstrom"}
         self.units["length"] = kwargs.pop("lengthunit", self.units["length"])
@@ -325,8 +331,6 @@ class DATAWriter(base.WriterBase):
             has_charges = True
 
         indices = atoms.indices + 1
-        types = atoms.types.astype(np.int32)
-
         moltags = data.get("molecule_tag", np.zeros(len(atoms), dtype=int))
 
         if self.convert_units:
@@ -336,7 +340,7 @@ class DATAWriter(base.WriterBase):
 
         if has_charges:
             for index, moltag, atype, charge, coords in zip(
-                indices, moltags, types, charges, coordinates
+                indices, moltags, self.lammps_types, charges, coordinates
             ):
                 x, y, z = coords
                 self.f.write(
@@ -345,7 +349,7 @@ class DATAWriter(base.WriterBase):
                 )
         else:
             for index, moltag, atype, coords in zip(
-                indices, moltags, types, coordinates
+                indices, moltags, self.lammps_types, coordinates
             ):
                 x, y, z = coords
                 self.f.write(
@@ -372,14 +376,21 @@ class DATAWriter(base.WriterBase):
         self.f.write("Masses\n")
         self.f.write("\n")
         mass_dict = {}
-        max_type = max(atoms.types.astype(np.int32))
-        for atype in range(1, max_type + 1):
-            # search entire universe for mass info, not just writing selection
-            masses = set(
-                atoms.universe.atoms.select_atoms(
-                    "type {:d}".format(atype)
-                ).masses
-            )
+
+        ###############
+        # Note: This is a temporary fix and it wound't work if the atom types
+        # are already integers !!
+        # However: Maybe it is is best to not allow atom types to be integers
+        # at all, which in turn would be problematic if one wnats to parse
+        # a data file with integer atom types.
+        ###############
+
+        all_types = np.unique(atoms.types)
+        for atype in all_types:
+
+            masses = set(atoms.universe.atoms.select_atoms(
+                'type {:d}'.format(atype)).masses)
+
             if len(masses) == 0:
                 mass_dict[atype] = 1.0
             else:
@@ -390,25 +401,32 @@ class DATAWriter(base.WriterBase):
                     + "atoms with same type must have same mass"
                 )
         for atype, mass in mass_dict.items():
-            self.f.write("{:d} {:f}\n".format(atype, mass))
+            self.f.write('{:d} {:f}\n'.format(self.type_dict[atype], mass))
+     
+    # mdanalysis is shitty when it comes to naming, because 'bonds' stands for all types of bonded interactions
+    # like angles, dihedrals, impropers, etc. This should be changed in the future.
+    
+    # LAMMPS expects integer bonded types
 
-    def _write_bonds(self, bonds):
-        self.f.write("\n")
-        self.f.write("{}\n".format(btype_sections[bonds.btype]))
-        self.f.write("\n")
-        for bond, i in zip(bonds, range(1, len(bonds) + 1)):
+
+    def _write_bonded(self, bonded):
+        self.f.write('\n')
+        self.f.write('{}\n'.format(btype_sections[bonded.btype]))
+        self.f.write('\n')
+
+
+        for j, bonding_element in enumerate(bonded):
+            bonded_type = self.bonding_containers[bonded.btype][self.rectify(bonded.btype, bonding_element)]
             try:
-                self.f.write(
-                    "{:d} {:d} ".format(i, int(bond.type))
-                    + " ".join((bond.atoms.indices + 1).astype(str))
-                    + "\n"
-                )
+                self.f.write('{:d} {:d} '.format(j+1, bonded_type) +\
+                        ' '.join((bonding_element.atoms.indices + 1).astype(str))+'\n')
             except TypeError:
-                errmsg = (
-                    f"LAMMPS DATAWriter: Trying to write bond, but bond "
-                    f"type {bond.type} is not numerical."
-                )
+                errmsg = (f"LAMMPS DATAWriter: Trying to write bond, but bond "
+                          f"type {bonding_element.type} is not numerical.")
                 raise TypeError(errmsg) from None
+        if self.only_return_assignments:
+            self.assignments[btype_sections[bonded.btype]] = self.bonding_containers[bonded.btype]
+
 
     def _write_dimensions(self, dimensions):
         """Convert dimensions to triclinic vectors, convert lengths to native
@@ -430,6 +448,16 @@ class DATAWriter(base.WriterBase):
             )
         self.f.write("\n")
 
+
+    def _reduce_unique_types(self, bonded, unique_bonding_types_dict):
+        i = 1
+        for bonding_element in bonded:
+            unique = self.rectify(bonded.btype, bonding_element)
+            if unique not in unique_bonding_types_dict:
+                unique_bonding_types_dict[unique] = i
+                i += 1
+        return unique_bonding_types_dict
+                
     @requires("types", "masses")
     def write(self, selection, frame=None):
         """Write selection at current trajectory frame to file.
@@ -438,7 +466,7 @@ class DATAWriter(base.WriterBase):
         Dihedrals, and Impropers (if these are defined) are
         written. The Atoms section is written in the "full" sub-style
         if charges are available or "molecular" sub-style if they are
-        not. Molecule id in atoms section is set to to 0.
+        not. Molecule id in atoms section is set to 0.
 
         No other sections are written to the DATA file.
         As of this writing, other sections are not parsed into the topology
@@ -464,17 +492,20 @@ class DATAWriter(base.WriterBase):
         else:
             frame = u.trajectory.ts.frame
 
-        # make sure to use atoms (Issue 46)
         atoms = selection.atoms
 
-        # check that types can be converted to ints if they aren't ints already
-        try:
-            atoms.types.astype(np.int32)
-        except ValueError:
-            errmsg = (
-                "LAMMPS.DATAWriter: atom types must be convertible to "
-                "integers"
-            )
+
+        if self.convert_types:
+            self.type_dict = {}
+            for i, type in enumerate(np.unique(atoms.types)):
+                self.type_dict[type] = i+1
+            self.lammps_types = np.array([self.type_dict[type] for type in atoms.types])
+        else:
+            try:
+                self.lammps_types = atoms.types.astype(np.int32)
+            except ValueError:
+                errmsg = ("LAMMPS.DATAWriter: atom types must be convertible to "
+                          "integers")
             raise ValueError(errmsg) from None
 
         try:
@@ -498,38 +529,90 @@ class DATAWriter(base.WriterBase):
             ]
 
             for btype, attr_name in attrs:
-                features[btype] = atoms.__getattribute__(attr_name)
-                self.f.write(
-                    "{:>12d}  {}\n".format(len(features[btype]), attr_name)
-                )
-                features[btype] = features[btype].atomgroup_intersection(
-                    atoms, strict=True
-                )
+                if hasattr(atoms, attr_name):
+                    features[btype] = atoms.__getattribute__(attr_name)
+                    if features[btype] is None or len(features[btype]) == 0:
+                        continue
+                    else:
+                        self.f.write('{:>12d}  {}\n'.format(len(features[btype]),
+                                                        attr_name))
+                    features[btype] = features[btype].atomgroup_intersection(
+                                    atoms, strict=True)
 
-            self.f.write("\n")
-            self.f.write(
-                "{:>12d}  atom types\n".format(
-                    max(atoms.types.astype(np.int32))
-                )
-            )
+            self.f.write('\n')
+            self.f.write('{:>12d}  atom types\n'.format(max(self.lammps_types)))
+
+
+            self.unique_bonds = {}
+            self.unique_angles = {}
+            self.unique_dihedrals = {}
+            self.unique_impropers = {}
+
+            self.bonding_containers = {
+                'bond': self.unique_bonds,
+                'angle': self.unique_angles,
+                'dihedral': self.unique_dihedrals,
+                'improper': self.unique_impropers
+            }
 
             for btype, attr in features.items():
-                self.f.write(
-                    "{:>12d}  {} types\n".format(len(attr.types()), btype)
-                )
+                if attr is None or len(attr) == 0:
+                    continue
+                else:
+                    self._reduce_unique_types(attr, self.bonding_containers[btype])
+                
+                self.f.write('{:>12d}  {} types\n'.format(len(self.bonding_containers[btype]),   # So instead the length of the unique types dict is written
+                                                          btype))
 
             self._write_dimensions(atoms.dimensions)
-
             self._write_masses(atoms)
             self._write_atoms(atoms, u.trajectory.ts.data)
+            if self.only_return_assignments:
+                self.assignments = {}
             for attr in features.values():
                 if attr is None or len(attr) == 0:
                     continue
-                self._write_bonds(attr)
-
+                self._write_bonded(attr)
             if has_velocities:
                 self._write_velocities(atoms)
 
+        if self.only_return_assignments:
+            return self.assignments
+        
+
+    def rectify(self, btype, top_object):
+        """Assign unique tuples of integers as types for bonded interactions."""
+        if btype == 'bond':
+            if self.convert_types:
+                a1, a2 = [self.type_dict[typ] for typ in top_object.atoms.types]
+            else:
+                a1, a2 = top_object.atoms.types
+            unique = tuple(sorted((a1, a2)))
+        elif btype == 'angle':
+            if self.convert_types:
+                a1, a2, a3 = [self.type_dict[typ] for typ in top_object.atoms.types]
+            else:
+                a1, a2, a3 = top_object.atoms.types
+            if a1 > a3:
+                unique = (a3, a2, a1)
+            else:
+                unique = (a1, a2, a3)
+        elif btype == 'dihedral':
+            if self.convert_types:
+                a1, a2, a3, a4 = [self.type_dict[typ] for typ in top_object.atoms.types]
+            else:
+                a1, a2, a3, a4 = top_object.atoms.types
+            if a1 > a4:
+                unique = (a4, a3, a2, a1)  
+            else:
+                unique = (a1, a2, a3, a4)  
+        elif btype == 'improper':
+            if self.convert_types:
+                a1, a2, a3, a4 = [self.type_dict[typ] for typ in top_object.atoms.types]
+            else:
+                a1, a2, a3, a4 = top_object.atoms.types
+            unique = (a1, sorted((a2, a3, a4)))
+        return unique
 
 class DumpReader(base.ReaderBase):
     """Reads the default `LAMMPS dump format

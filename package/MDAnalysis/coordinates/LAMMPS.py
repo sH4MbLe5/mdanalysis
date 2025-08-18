@@ -309,7 +309,6 @@ class DATAWriter(base.WriterBase):
 
         self.convert_units = convert_units
         self.convert_types = kwargs.pop('convert_types', False)
-        self.only_return_assignments = kwargs.pop('only_return_assignments', False)
 
         self.units = {"time": "fs", "length": "Angstrom"}
         self.units["length"] = kwargs.pop("lengthunit", self.units["length"])
@@ -402,18 +401,11 @@ class DATAWriter(base.WriterBase):
                 )
         for atype, mass in mass_dict.items():
             self.f.write('{:d} {:f}\n'.format(self.type_dict[atype], mass))
-     
-    # mdanalysis is shitty when it comes to naming, because 'bonds' stands for all types of bonded interactions
-    # like angles, dihedrals, impropers, etc. This should be changed in the future.
-    
-    # LAMMPS expects integer bonded types
-
 
     def _write_bonded(self, bonded):
         self.f.write('\n')
         self.f.write('{}\n'.format(btype_sections[bonded.btype]))
         self.f.write('\n')
-
 
         for j, bonding_element in enumerate(bonded):
             bonded_type = self.bonding_containers[bonded.btype][self.rectify(bonded.btype, bonding_element)]
@@ -424,8 +416,6 @@ class DATAWriter(base.WriterBase):
                 errmsg = (f"LAMMPS DATAWriter: Trying to write bond, but bond "
                           f"type {bonding_element.type} is not numerical.")
                 raise TypeError(errmsg) from None
-        if self.only_return_assignments:
-            self.assignments[btype_sections[bonded.btype]] = self.bonding_containers[bonded.btype]
 
 
     def _write_dimensions(self, dimensions):
@@ -494,12 +484,21 @@ class DATAWriter(base.WriterBase):
 
         atoms = selection.atoms
 
+        allPositiveInt = all(isinstance(x, int) and x > 0 for x in atoms.types)
+        allStrings = all(isinstance(x, str) for x in atoms.types)
+
+        if not (allPositiveInt or allStrings):
+            raise ValueError("atom.types must be either all positive integers or all strings, got mixed types.")
+        elif allPositiveInt and self.convert_types:
+            raise Warning('atom.types are already positive integers, neglecting "convert_types".')
+        elif allStrings and not self.convert_types:
+            raise ValueError('atom.types are strings. Either provide integer atom types or set "convert_types" to True.')
 
         if self.convert_types:
             self.type_dict = {}
             for i, type in enumerate(np.unique(atoms.types)):
                 self.type_dict[type] = i+1
-            self.lammps_types = np.array([self.type_dict[type] for type in atoms.types])
+            self.lammps_types = np.array([self.type_dict[typ] for typ in atoms.types])
         else:
             try:
                 self.lammps_types = atoms.types.astype(np.int32)
@@ -540,8 +539,11 @@ class DATAWriter(base.WriterBase):
                                     atoms, strict=True)
 
             self.f.write('\n')
-            self.f.write('{:>12d}  atom types\n'.format(max(self.lammps_types)))
-
+            self.f.write(
+                '{:>12d}  atom types\n'.format(
+                    max(self.lammps_types)
+                )
+            )
 
             self.unique_bonds = {}
             self.unique_angles = {}
@@ -558,26 +560,20 @@ class DATAWriter(base.WriterBase):
             for btype, attr in features.items():
                 if attr is None or len(attr) == 0:
                     continue
-                else:
-                    self._reduce_unique_types(attr, self.bonding_containers[btype])
-                
-                self.f.write('{:>12d}  {} types\n'.format(len(self.bonding_containers[btype]),   # So instead the length of the unique types dict is written
+                self._reduce_unique_types(attr, self.bonding_containers[btype])
+                self.f.write('{:>12d}  {} types\n'.format(len(self.bonding_containers[btype]),
                                                           btype))
 
             self._write_dimensions(atoms.dimensions)
             self._write_masses(atoms)
             self._write_atoms(atoms, u.trajectory.ts.data)
-            if self.only_return_assignments:
-                self.assignments = {}
+
             for attr in features.values():
                 if attr is None or len(attr) == 0:
                     continue
                 self._write_bonded(attr)
             if has_velocities:
                 self._write_velocities(atoms)
-
-        if self.only_return_assignments:
-            return self.assignments
         
 
     def rectify(self, btype, top_object):

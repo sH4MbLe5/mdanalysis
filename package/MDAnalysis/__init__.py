@@ -175,6 +175,8 @@ _SINGLEFRAME_WRITERS: Dict = {}
 _MULTIFRAME_WRITERS: Dict = {}
 _PARSERS: Dict = {}
 _PARSER_HINTS: Dict = {}
+_TOPOLOGY_WRITERS : Dict = {}
+_TOPOLOGY_WRITER_HINTS: Dict = {}
 _SELECTION_WRITERS: Dict = {}
 _CONVERTERS: Dict = {}
 # Registry of TopologyAttributes

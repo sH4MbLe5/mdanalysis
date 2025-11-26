@@ -128,7 +128,10 @@ Classes
 
 """
 
-class ITPWriter():
+
+from .base import TopologyWriterBase
+
+class ITPWriter(TopologyWriterBase):
     """Writes topology information in a GROMACS ITP_ file.
 
     Creates a Topology with the following Attributes:
@@ -158,11 +161,6 @@ class ITPWriter():
     #: of 3 decimal places is hard-coded here.
     fmt = {
         "n_atoms": "{0:5d}\n",  # number of atoms
-        # coordinates output format, see http://chembytes.wikidot.com/g-grofile
-        "xyz": "{resid:>5d}{resname:<5.5s}{name:>5.5s}{index:>5d}{pos[0]:8.3f}{pos[1]:8.3f}{pos[2]:8.3f}\n",
-        # unitcell
-        "box_orthorhombic": "{box[0]:10.5f} {box[1]:9.5f} {box[2]:9.5f}\n",
-        "box_triclinic": "{box[0]:10.5f} {box[4]:9.5f} {box[8]:9.5f} {box[1]:9.5f} {box[2]:9.5f} {box[3]:9.5f} {box[5]:9.5f} {box[6]:9.5f} {box[7]:9.5f}\n",
     }
 
 
@@ -177,8 +175,20 @@ class ITPWriter():
         self.filename = filename
         self.kwargs = kwargs
 
+        self.include_directives = self.kwargs.pop("include_directives", None)
 
-    def write_molecules(self,):
+
+    def write_include_directives(self):
+        with open(self.filename, 'a') as f:
+            f.write("\n; Include directives\n")
+            if len(self.include_directives) == 1:
+                f.write(f"#include \"{self.include_directives}\"\n")
+            else:
+                for include in self.include_directives:
+                    f.write(f"#include \"{include}\"\n")
+
+
+    def write_moleculetypes_directive(self,):
         topology = self.topology
         mol_name = topology.moltypes[0] if topology.moltypes else "MOL"
         with open(self.filename, 'w') as f:
@@ -194,13 +204,15 @@ atom type; residue number; residue name; atom name; charge group number; q(e); m
             """)
 
 
-    def write_include_directives(self,):
-        if self.include_directives:
-            for include in self.include_directives:
-                f.write(f"#include \"{include}\"\n")
+    def write_atoms_directive(self,):
+        atoms = self.topology.atoms
+        with open(self.filename, 'a') as f:
+            for atom in atoms:
+                f.write(f"{atom.id:5d} {atom.type:<10} {atom.resid:5d} "
+                        f"{atom.resname:<5} {atom.name:<5} {atom.chargegroup:5d} "
+                        f"{atom.charge:8.4f} {atom.mass:8.4f}\n")
 
-
-    def write(self, topology):
+    def write(self, universe):
         """Writes the topology to an ITP file.
 
         Parameters
@@ -208,6 +220,13 @@ atom type; residue number; residue name; atom name; charge group number; q(e); m
         topology : Topology
             The Topology object to write to the ITP file.
         """
-        if "include_directives" in self.kwargs:
+        self.topology = topology
+
+        if self.include_directives is not None:                
             self.write_include_directives()
+        self.write_molecules()
+
+        print("Success!")
+        # if "include_directives" in self.kwargs:
+        #     self.write_include_directives()
         

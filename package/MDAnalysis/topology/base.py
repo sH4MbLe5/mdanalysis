@@ -42,7 +42,7 @@ import itertools
 import numpy as np
 import warnings
 
-from .. import _PARSERS, _PARSER_HINTS
+from .. import _PARSERS, _PARSER_HINTS, _TOPOLOGY_WRITERS, _TOPOLOGY_WRITER_HINTS
 from ..coordinates.base import IOBase
 from ..lib import util
 
@@ -87,9 +87,52 @@ class _Topologymeta(type):
             for fmt_name in fmt:
                 fmt_name = fmt_name.upper()
                 _PARSERS[fmt_name] = cls
-
                 if '_format_hint' in classdict:
                     _PARSER_HINTS[fmt_name] = classdict['_format_hint'].__func__
+
+
+class _TopologyWritermeta(type):
+    """Internal: Topology Parser registration voodoo
+
+    When classes which inherit from TopologyWriterBase are *defined*
+    this metaclass makes it known to MDAnalysis.  The optional `format`
+    attribute and `_format_hint` staticmethod are read:
+     - `format` defines the file extension this Parser targets.
+     - `_format_hint` defines a function which returns a boolean if the
+       Parser can process a particular object
+
+    Eg::
+
+      class ThingParser(TopologyWriterBase):
+          format = ['foo', 'bar']
+
+          @staticmethod
+          _format_hint(thing):
+              try:
+                  import WeirdPackage
+              except ImportError:
+                  return False
+              return isinstance(thing, WeirdPackage.Thing)
+
+    This way there is no strict dependency on "WeirdPackage", but if
+    a user supplies a WeirdPackage.Thing the "ThingParser' will be able
+    to step up and read it.
+
+       Added format_hint functionality
+    """
+    def __init__(cls, name, bases, classdict):
+        type.__init__(type, name, bases, classdict)
+        try:
+            fmt = util.asiterable(classdict['format'])
+        except KeyError:
+            pass
+        else:
+            for fmt_name in fmt:
+                fmt_name = fmt_name.upper()
+                _TOPOLOGY_WRITERS[fmt_name] = cls
+                if '_format_hint' in classdict:
+                    _TOPOLOGY_WRITER_HINTS[fmt_name] = classdict['_format_hint'].__func__
+
 
 class TopologyReaderBase(IOBase, metaclass=_Topologymeta):
     """Base class for topology readers
@@ -119,6 +162,32 @@ class TopologyReaderBase(IOBase, metaclass=_Topologymeta):
 
     def parse(self, **kwargs):  # pragma: no cover
         raise NotImplementedError("Override this in each subclass")
+
+
+class TopologyWriterBase(IOBase, metaclass=_TopologyWritermeta):
+    """Base class for topology writers
+
+    Parameters
+    ----------
+    filename : str
+        name of the topology file
+
+
+    All topology writers must define a `write` method which
+    writes a Topology object into a file.
+
+    Raises
+    ------
+    * :exc:`IOError` upon failing to write a topology file
+    * :exc:`ValueError` upon failing to make sense of the written data
+    """
+    def __init__(self, filename):
+        self.filename = filename
+
+    def write(self, **kwargs):  # pragma: no cover
+        raise NotImplementedError("Override this in each subclass")
+
+
 
 
 def squash_by(child_parent_ids, *attributes):

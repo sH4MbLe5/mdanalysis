@@ -27,6 +27,8 @@ from .. import (
     _READER_HINTS,
     _PARSERS,
     _PARSER_HINTS,
+    _TOPOLOGY_WRITERS,
+    _TOPOLOGY_WRITER_HINTS,
     _MULTIFRAME_WRITERS,
     _SINGLEFRAME_WRITERS,
     _CONVERTERS,
@@ -274,6 +276,60 @@ def get_parser_for(filename, format=None):
             raise ValueError(errmsg) from None
         else:
             return _PARSERS["MINIMAL"]
+
+
+def get_topology_writer_for(filename, format=None):
+    """Return the appropriate topology writer for `filename`.
+
+    Automatic detection is disabled when an explicit `format` is
+    provided.
+
+    Parameters
+    ----------
+    filename : str or mmtf.MMTFDecoder
+        name of the topology file; if this is an instance of
+        :class:`mmtf.MMTFDecoder` then directly use the MMTF format.
+    format : str
+        description of the file format
+
+    Raises
+    ------
+    ValueError
+        If no appropriate writer could be found.
+    """
+    if inspect.isclass(format):
+        return format
+
+    # Only guess if format is not provided
+    if format is None:
+        for fmt_name, test in _TOPOLOGY_WRITER_HINTS.items():
+            if test(filename):
+                format = fmt_name
+                break
+        else:
+            print(f"else loop")
+            format = util.guess_format(filename)
+            print(f"guessed format: {format}")
+    format = format.upper()
+    print(f"_TOPOLOGY_WRITERS[format]: {_TOPOLOGY_WRITERS[format]}")
+    try:
+        return _TOPOLOGY_WRITERS[format]
+    except KeyError:
+        errmsg = (
+            "'{0}' isn't a valid topology format\n"
+            "   You can use 'Universe.write_topology(topology, ..., topology_format=FORMAT)'\n"
+            "   to explicitly specify the format and\n"
+            "   override automatic detection. Known FORMATs are:\n"
+            "   {1}\n"
+            "   See https://docs.mdanalysis.org/documentation_pages/topology/init.html#supported-topology-formats\n"
+            "   For missing formats, raise an issue at \n"
+            "   https://github.com/MDAnalysis/mdanalysis/issues".format(
+                format, _PARSERS.keys()
+            )
+        )
+        raise ValueError(errmsg) from None
+    # else:
+    #     return _PARSERS["MINIMAL"]
 
 
 def get_converter_for(format):

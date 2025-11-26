@@ -63,6 +63,10 @@ import typing
 
 from .topologyattrs import Atomindices, Resindices, Segindices
 from ..exceptions import NoDataError
+from ..lib import util
+
+
+from ._get_readers import get_topology_writer_for
 
 
 def make_downshift_arrays(upshift, nparents):
@@ -671,3 +675,62 @@ class Topology(object):
             attr._add_new(newval)
 
         return segidx
+
+
+    def write(
+        self,
+        filename,
+        file_format=None,
+        filenamefmt="{trjname}_{frame}",
+        **kwargs,
+    ):
+        """Write `Topology` to a file.
+
+        Examples
+        --------
+
+        .. code-block:: python
+
+            >>> ag = u.atoms
+            >>> ag.write('selection.ndx')  # Write a gromacs index file
+            >>> ag.write('coordinates.pdb')  # Write the current frame as PDB
+            >>> # Write the trajectory in XTC format
+            >>> ag.write('trajectory.xtc', frames='all')
+            >>> # Write every other frame of the trajectory in PBD format
+            >>> ag.write('trajectory.pdb', frames=u.trajectory[::2])
+
+        Parameters
+        ----------
+        filename : str
+        file_format : str, optional
+            The name or extension of a coordinate, trajectory, or selection
+            file format such as PDB, CRD, GRO, VMD (tcl), PyMol (pml), Gromacs
+            (ndx) CHARMM (str) or Jmol (spt); case-insensitive [PDB]
+        filenamefmt : str, optional
+            format string for default filename; use substitution tokens
+            'trjname' and 'frame' ["%(trjname)s_%(frame)d"]
+        """
+
+        # check that Topology actually contains any atoms 
+        
+
+        # From the following blocks, one must pass.
+        # Both can't pass as the extensions don't overlap.
+        # Try and select a Class using get_ methods (becomes `writer`)
+        # Once (and if!) class is selected, use it in with block
+        filename = util.filename(
+            filename,
+            ext=file_format if file_format is not None else "ITP",
+            keep=True,
+        )
+        try:
+            writer = get_topology_writer_for(
+                filename, format=file_format)
+        except (ValueError, TypeError):
+            pass
+        else:
+            with writer(filename, **kwargs) as w:
+                w.write(self)
+            return
+
+        raise ValueError("No topology writer found for format: {}".format(filename))

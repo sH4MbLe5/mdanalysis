@@ -3913,6 +3913,7 @@ class AtomGroup(GroupBase):
         # Both can't pass as the extensions don't overlap.
         # Try and select a Class using get_ methods (becomes `writer`)
         # Once (and if!) class is selected, use it in with block
+        print(f"filename: {filename}")
         try:
             writer = get_writer_for(
                 filename, format=file_format, multiframe=multiframe

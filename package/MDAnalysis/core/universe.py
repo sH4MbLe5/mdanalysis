@@ -1982,6 +1982,32 @@ class Universe(object):
         _generate_from_topology(self)
 
 
+    def write_topology(self, filename, **kwargs):
+        """Write the Universe topology to a file.
+
+        Parameters
+        ----------
+        filename : str
+            The name of the file to write the topology to.
+        kwargs : dict
+            Additional keyword arguments passed to the topology writer.
+
+        Examples
+        --------
+        To write the Universe topology to a ITP file::
+
+            u.write_topology('output.itp') 
+
+        or 
+
+            u.write_topology('output', topology_format="ITP")
+        """
+        if not self._topology:
+            raise NoDataError("Universe has no topology to write.")
+        else:
+            self._topology.write(filename, **kwargs)
+        
+
 def Merge(*args):
     """Create a new new :class:`Universe` from one or more
     :class:`~MDAnalysis.core.groups.AtomGroup` instances.

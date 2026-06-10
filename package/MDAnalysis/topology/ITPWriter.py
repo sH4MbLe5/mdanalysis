@@ -128,8 +128,24 @@ Classes
 
 """
 
-
+import numpy as np
 from .base import TopologyWriterBase
+
+
+import numpy as np
+
+def cast_to_int(value):
+    """Convert MDAnalysis topology attribute to int when possible."""
+    # bytes / numpy.bytes_ → decode to string
+    try:
+        value_type = int(value.type)
+    except ValueError:
+        try:
+            value_type = int(value.type.decode())
+        except AttributeError:
+            raise ValueError(f"Cannot convert bond type to int: {value.type}")
+    return value_type
+
 
 class ITPWriter(TopologyWriterBase):
     """Writes topology information in a GROMACS ITP_ file.
@@ -174,59 +190,120 @@ class ITPWriter(TopologyWriterBase):
         """
         self.filename = filename
         self.kwargs = kwargs
+        self.molnumToWrite = kwargs.pop("molnum", None)
+        self.include_directives = kwargs.pop("include_directives", None)
+        self.impropers_type = kwargs.pop("impropers_type", None)
 
-        self.include_directives = self.kwargs.pop("include_directives", None)
+    def write_include_directives(self, f):
+        f.write("\n; Include directives\n")
+        if len(self.include_directives) == 1:
+            f.write(f"#include \"{self.include_directives}\"\n")
+        else:
+            for include in self.include_directives:
+                f.write(f"#include \"{include}\"\n")
 
 
-    def write_include_directives(self):
-        with open(self.filename, 'a') as f:
-            f.write("\n; Include directives\n")
-            if len(self.include_directives) == 1:
-                f.write(f"#include \"{self.include_directives}\"\n")
-            else:
-                for include in self.include_directives:
-                    f.write(f"#include \"{include}\"\n")
-
-
-    def write_moleculetypes_directive(self,):
-        topology = self.topology
-        mol_name = topology.moltypes[0] if topology.moltypes else "MOL"
-        with open(self.filename, 'w') as f:
-            f.write("[ moleculetypes ]")
-            f.write(f"""
+    def _write_moleculetype_directive(self, f):
+        f.write("[ moleculetype ]")
+        f.write(f"""
 ; molname       nrexcl
-{mol_name}            2
-            """)
+{self.moltype}            2
+\n""")
 
-            f.write("[ atoms ]")
-            f.write("""
-atom type; residue number; residue name; atom name; charge group number; q(e); m(u)
-            """)
+    def _write_atoms_directive(self, f):        
+        f.write("[ atoms ]")
+        f.write("""
+;  nr  type  resnum  resname  name  chrggrp   charge     mass
+""")
+        for atom in self.atoms:
+            f.write(f"{atom.id:5d} {atom.type:>5} {atom.resid:7d} "
+                    f"{atom.resname:>8} {atom.name:>5} {atom.chargegroup:>8d} "
+                    f"{atom.charge:8.6f} {atom.mass:8.4f}\n")
+                
+
+    def _write_bonds_directive(self, f):
+        bonds = self.atoms.bonds
+        if len(bonds) == 0:
+            return
+        f.write("\n[ bonds ]\n")
+        f.write(";  ai    aj funct\n")
+        for bond in bonds:
+            bond_type = cast_to_int(bond)
+            f.write(f"{bond[0].id:5d} {bond[1].id:5d} {bond_type:5d}\n")
+
+    def _write_pairs_directive(self, f):
+        pairs = self.atoms.pairs
+        if len(pairs) == 0:
+            return
+        f.write("\n[ pairs ]\n")
+        f.write(";  ai    aj funct\n")
+        for pair in pairs:
+            pair_type = cast_to_int(pair)
+            f.write(f"{pair[0].id:5d} {pair[1].id:5d} {pair_type:5d}\n")
+
+    def _write_angles_directive(self, f):
+        angles = self.atoms.angles
+        if len(angles) == 0:
+            return
+        f.write("\n[ angles ]\n")
+        f.write(";  ai    aj    ak funct\n")
+        for angle in angles:
+            angle_type = cast_to_int(angle)
+            f.write(f"{angle[0].id:5d} {angle[1].id:5d} {angle[2].id:5d} "
+                    f"{angle_type:5d}\n")
+
+    def _write_dihedrals_directive(self, f):
+        dihedrals = self.atoms.dihedrals
+        if len(dihedrals) == 0:
+            return
+        f.write("\n[ dihedrals ]\n")
+        f.write(";  ai    aj    ak    al funct\n")
+        for dihedral in dihedrals:
+            dihedral_type = cast_to_int(dihedral)
+            f.write(f"{dihedral[0].id:5d} {dihedral[1].id:5d} {dihedral[2].id:5d} {dihedral[3].id:5d} "
+                    f"{dihedral_type:5d}\n")
+
+    def _write_impropers_directive(self, f):
+        impropers = self.atoms.impropers
+        if len(impropers) == 0:
+            return
+        f.write("\n[ dihedrals ]\n")
+        f.write(";  ai    aj    ak    al funct\n")
+        for improper in impropers:
+            improper_type = cast_to_int(improper)
+            f.write(f"{improper[0].id:5d} {improper[1].id:5d} {improper[2].id:5d} {improper[3].id:5d} "
+                    f"{improper_type:5d}\n")
 
 
-    def write_atoms_directive(self,):
-        atoms = self.topology.atoms
-        with open(self.filename, 'a') as f:
-            for atom in atoms:
-                f.write(f"{atom.id:5d} {atom.type:<10} {atom.resid:5d} "
-                        f"{atom.resname:<5} {atom.name:<5} {atom.chargegroup:5d} "
-                        f"{atom.charge:8.4f} {atom.mass:8.4f}\n")
-
-    def write(self, universe):
+    def write(self, atoms):
         """Writes the topology to an ITP file.
 
         Parameters
         ----------
-        topology : Topology
-            The Topology object to write to the ITP file.
+        atoms : AtomGroup
+            The AtomGroup of which the topology is to be written to the ITP file.
         """
-        self.topology = topology
 
-        if self.include_directives is not None:                
-            self.write_include_directives()
-        self.write_molecules()
+        molnum = self.molnumToWrite
+        fragment = atoms.fragments[molnum]
+        self.atoms = fragment.atoms
 
-        print("Success!")
-        # if "include_directives" in self.kwargs:
-        #     self.write_include_directives()
+        molnumsInFragment = np.unique(fragment.molnums)
+        if len(molnumsInFragment) > 1:
+            raise ValueError(f"Fragment {molnum} contains multiple molnums: {molnumsInFragment}. Cannot write ITP file.")
+        moltypesInFragment = np.unique(fragment.moltypes)
+        if len(moltypesInFragment) > 1:
+            raise ValueError(f"Fragment {molnum} contains multiple moltypes: {moltypesInFragment}. Cannot write ITP file.")
+        self.moltype = moltypesInFragment[0]
+
+        with open(self.filename, 'w') as f:
+            if self.include_directives is not None:                
+                self.write_include_directives(f)
+            self._write_moleculetype_directive(f)
+            self._write_atoms_directive(f)
+            self._write_bonds_directive(f)
+            self._write_pairs_directive(f)
+            self._write_angles_directive(f)
+            self._write_dihedrals_directive(f)
+            self._write_impropers_directive(f)
         

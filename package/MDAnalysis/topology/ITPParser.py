@@ -151,6 +151,7 @@ from ..core.topologyattrs import (
     Resnames,
     Segids,
     Bonds,
+    Pairs,
     Angles,
     Dihedrals,
     Impropers,
@@ -310,6 +311,7 @@ class Molecule:
         self.masses = []
 
         self.bonds = defaultdict(list)
+        self.pairs = defaultdict(list)
         self.angles = defaultdict(list)
         self.dihedrals = defaultdict(list)
         self.impropers = defaultdict(list)
@@ -317,6 +319,7 @@ class Molecule:
         self.parsers = {
             "atoms": self.parse_atoms,
             "bonds": self.parse_bonds,
+            "pairs": self.parse_pairs,
             "angles": self.parse_angles,
             "dihedrals": self.parse_dihedrals,
             "constraints": self.parse_constraints,
@@ -340,7 +343,7 @@ class Molecule:
 
     @property
     def params(self):
-        return [self.bonds, self.angles, self.dihedrals, self.impropers]
+        return [self.bonds, self.pairs, self.angles, self.dihedrals, self.impropers]
 
     def parse_atoms(self, line):
         values = line.split()
@@ -354,6 +357,14 @@ class Molecule:
         self.add_param(
             line,
             self.bonds,
+            n_funct=2,
+            funct_values=(1, 2, 3, 4, 5, 6, 7, 8, 9, 10),
+        )
+
+    def parse_pairs(self, line):
+        self.add_param(
+            line,
+            self.pairs,
             n_funct=2,
             funct_values=(1, 2, 3, 4, 5, 6, 7, 8, 9, 10),
         )
@@ -506,6 +517,7 @@ class ITPParser(TopologyReaderBase):
     - moltypes
     - molnums
     - bonds
+    - pairs
     - angles
     - dihedrals
     - impropers
@@ -694,6 +706,7 @@ class ITPParser(TopologyReaderBase):
         # connectivity stuff
         for dct, Attr, attrname in (
             (self.bonds, Bonds, "bonds"),
+            (self.pairs, Pairs, "pairs"),
             (self.angles, Angles, "angles"),
             (self.dihedrals, Dihedrals, "dihedrals"),
             (self.impropers, Impropers, "impropers"),
@@ -761,11 +774,12 @@ class ITPParser(TopologyReaderBase):
         ]
 
         self.bonds = defaultdict(list)
+        self.pairs = defaultdict(list)
         self.angles = defaultdict(list)
         self.dihedrals = defaultdict(list)
         self.impropers = defaultdict(list)
 
-        self.params = [self.bonds, self.angles, self.dihedrals, self.impropers]
+        self.params = [self.bonds, self.pairs, self.angles, self.dihedrals, self.impropers]
 
         for i, moltype in enumerate(self.system_molecules):
             mol = self.molecules[moltype]

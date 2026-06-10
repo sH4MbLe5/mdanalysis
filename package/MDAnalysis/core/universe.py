@@ -1982,30 +1982,30 @@ class Universe(object):
         _generate_from_topology(self)
 
 
-    def write_topology(self, filename, **kwargs):
-        """Write the Universe topology to a file.
+    # def write_topology(self, filename, **kwargs):
+    #     """Write the Universe topology to a file.
 
-        Parameters
-        ----------
-        filename : str
-            The name of the file to write the topology to.
-        kwargs : dict
-            Additional keyword arguments passed to the topology writer.
+    #     Parameters
+    #     ----------
+    #     filename : str
+    #         The name of the file to write the topology to.
+    #     kwargs : dict
+    #         Additional keyword arguments passed to the topology writer.
 
-        Examples
-        --------
-        To write the Universe topology to a ITP file::
+    #     Examples
+    #     --------
+    #     To write the Universe topology to a ITP file::
 
-            u.write_topology('output.itp') 
+    #         u.write_topology('output.itp') 
 
-        or 
+    #     or 
 
-            u.write_topology('output', topology_format="ITP")
-        """
-        if not self._topology:
-            raise NoDataError("Universe has no topology to write.")
-        else:
-            self._topology.write(filename, **kwargs)
+    #         u.write_topology('output', topology_format="ITP")
+    #     """
+    #     if not self._topology:
+    #         raise NoDataError("Universe has no topology to write.")
+    #     else:
+    #         self._topology.write(filename, **kwargs)
         
 
 def Merge(*args):
@@ -2090,7 +2090,7 @@ def Merge(*args):
     blank_topology_attrs = set(dir(Topology(attrs=[])))
     common_attrs = set.intersection(*[set(dir(ag.universe._topology))
                                       for ag in args])
-    tops = set(['bonds', 'angles', 'dihedrals', 'impropers'])
+    tops = set(['bonds', 'pairs', 'angles', 'dihedrals', 'impropers'])
 
     attrs = []
 

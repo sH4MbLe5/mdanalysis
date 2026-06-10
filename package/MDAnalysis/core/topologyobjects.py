@@ -205,6 +205,45 @@ class Bond(TopologyObject):
     value = length
 
 
+class Pair(TopologyObject):
+    """A pair interaction between two :class:`~MDAnalysis.core.groups.Atom` instances.
+
+    Two :class:`Pair` instances can be compared with the ``==`` and
+    ``!=`` operators. A pair is equal to another if the same atom
+    numbers are connected.
+
+    The presence of a particular atom can also be queried::
+
+      >>> Atom in Pair
+
+    will return either ``True`` or ``False``.
+    """
+
+    btype = "pair"
+
+    def partner(self, atom):
+        """Pair.partner(Atom)
+
+        Returns
+        -------
+        the other :class:`~MDAnalysis.core.groups.Atom` in this
+        pair
+        """
+        if atom == self.atoms[0]:
+            return self.atoms[1]
+        elif atom == self.atoms[1]:
+            return self.atoms[0]
+        else:
+            raise ValueError("Unrecognised Atom")
+        
+    def distance(self, pbc=True):
+        """Distance between the atoms."""
+        box = self.universe.dimensions if pbc else None
+        return distances.calc_bonds(self[0].position, self[1].position, box)
+    
+    value = distance
+
+
 class Angle(TopologyObject):
     """An angle between three :class:`~MDAnalysis.core.groups.Atom` instances.
     Atom 2 is the apex of the angle
@@ -526,6 +565,7 @@ class TopologyDict(object):
 
 _BTYPE_TO_SHAPE = {
     "bond": 2,
+    "pair": 2,
     "ureybradley": 2,
     "angle": 3,
     "dihedral": 4,
@@ -848,6 +888,7 @@ class TopologyGroup(object):
         if isinstance(item, numbers.Integral):
             outclass = {
                 "bond": Bond,
+                "pair": Pair,
                 "angle": Angle,
                 "dihedral": Dihedral,
                 "improper": ImproperDihedral,

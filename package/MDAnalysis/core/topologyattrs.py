@@ -3463,6 +3463,21 @@ class Bonds(_Connection):
         ("n_fragments", property(n_fragments, None, None, n_fragments.__doc__))
     )
 
+class Pairs(_Connection):
+    """Pairs between two atoms
+
+    Initialise with a list of 2 long tuples
+
+    These indices refer to the atom indices.
+
+    .. versionadded:: 1.0.0
+    """
+
+    attrname = "pairs"
+    singular = "pairs"
+    transplants = defaultdict(list)
+    _n_atoms = 2
+
 
 class UreyBradleys(_Connection):
     """Angles between two atoms

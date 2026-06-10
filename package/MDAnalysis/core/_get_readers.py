@@ -307,11 +307,8 @@ def get_topology_writer_for(filename, format=None):
                 format = fmt_name
                 break
         else:
-            print(f"else loop")
             format = util.guess_format(filename)
-            print(f"guessed format: {format}")
     format = format.upper()
-    print(f"_TOPOLOGY_WRITERS[format]: {_TOPOLOGY_WRITERS[format]}")
     try:
         return _TOPOLOGY_WRITERS[format]
     except KeyError:
